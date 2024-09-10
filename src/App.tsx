@@ -1,30 +1,11 @@
 import React, { useState } from "react";
 import Papa from "papaparse"; // For parsing CSV files
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  ScatterChart,
-  Scatter,
-  FunnelChart,
-  Funnel,
-  Legend,
-  LabelList,
-  Cell,
-  Pie,
-  PieChart,
-} from "recharts";
-import Baar from "./components/Bar";
-import Piea from "./components/PieChart";
-import LineCharttt from "./components/LineChart";
+
+import BarChart from "./components/Bar";
+import PieChart from "./components/PieChart";
+import LineChart from "./components/LineChart";
+import AreaChart from "./components/AreaChart";
+import ScatterPlot from "./components/ScatterChart";
 
 // import { BarChartVisx } from "./BarChartVisx";
 
@@ -75,7 +56,6 @@ const App = () => {
       },
     });
   };
-  console.log("headers", headers);
   // Function to group data by X-axis and count/sum values for Y-axis
   const aggregateData = (data: DataPoint[], xKey: string, yKey: string) => {
     const groupedData: Record<string, number> = {};
@@ -116,123 +96,22 @@ const App = () => {
     switch (chartType) {
       case "bar":
         return (
-          <Baar
+          <BarChart
             aggregatedData={aggregatedData}
             xAxis={xAxisKey}
             yAxis={yAxisKey}
           />
-          // <ResponsiveContainer width="100%" height={400}>
-          //   <BarChart
-          //     data={aggregatedData}
-          //     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          //   >
-          //     <CartesianGrid strokeDasharray="3 3" />
-          //     <XAxis dataKey="name" />
-          //     <YAxis />
-          //     <Tooltip />
-          //     <Legend />
-          //     <Bar dataKey="value" fill="#8884d8" />
-          //   </BarChart>
-          // </ResponsiveContainer>
         );
       case "pie":
-        return (
-          <Piea aggregatedData={aggregatedData} />
-          // <ResponsiveContainer width="100%" height={400}>
-          //   <PieChart>
-          //     <Pie
-          //       data={aggregatedData}
-          //       dataKey="value"
-          //       nameKey="name"
-          //       outerRadius={150}
-          //       fill="#8884d8"
-          //       label
-          //     >
-          //       {aggregatedData.map((_, index: number) => (
-          //         <Cell
-          //           key={`cell-${index}`}
-          //           fill={COLORS[index % COLORS.length]}
-          //         />
-          //       ))}
-          //     </Pie>
-          //   </PieChart>
-          // </ResponsiveContainer>
-        );
+        return <PieChart aggregatedData={aggregatedData} />;
       case "line":
-        return (
-          <LineCharttt aggregatedData={aggregatedData} />
-          // <ResponsiveContainer width="100%" height={400}>
-          //   <LineChart
-          //     data={aggregatedData}
-          //     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-          //   >
-          //     <CartesianGrid strokeDasharray="3 3" />
-          //     <XAxis dataKey="name" />
-          //     <YAxis />
-          //     <Tooltip />
-          //     <Legend />
-          //     <Line type="monotone" dataKey="value" stroke="#8884d8" />
-          //   </LineChart>
-          // </ResponsiveContainer>
-        );
+        return <LineChart aggregatedData={aggregatedData} />;
       case "area":
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-            <AreaChart
-              data={aggregatedData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#8884d8"
-                fill="#8884d8"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        );
+        return <AreaChart aggregatedData={aggregatedData} />;
       case "scatter":
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-            <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Scatter name="Data" data={aggregatedData} fill="#8884d8" />
-            </ScatterChart>
-          </ResponsiveContainer>
-        );
-      case "funnel":
-        return (
-          <ResponsiveContainer width="100%" height={400}>
-            <FunnelChart>
-              <Tooltip />
-              <Legend />
-              <Funnel
-                data={aggregatedData}
-                isAnimationActive
-                dataKey="value"
-                nameKey="name"
-                fill="#8884d8"
-                stroke="#8884d8"
-              >
-                <LabelList
-                  position="right"
-                  fill="#000"
-                  stroke="none"
-                  dataKey="name"
-                />
-              </Funnel>
-            </FunnelChart>
-          </ResponsiveContainer>
-        );
+        return <ScatterPlot aggregatedData={aggregatedData} />;
+      // case "funnel":
+      //   return <FunnelChart aggregatedData={aggregatedData} />;
       case "table":
         return (
           <table style={{ margin: "0 auto", borderCollapse: "collapse" }}>
@@ -329,7 +208,7 @@ const App = () => {
               <option value="line">Line Chart</option>
               <option value="area">Area Chart</option>
               <option value="scatter">Scatter Chart</option>
-              <option value="funnel">Funnel Chart</option>
+              {/* <option value="funnel">Funnel Chart</option> */}
               <option value="table">Table</option>
             </select>
           </label>
