@@ -40,8 +40,8 @@ const BarChart: React.FC = ({ aggregatedData, xAxis, yAxis }: any) => {
     console.log("coords", coords);
     showTooltip({
       tooltipData: datum,
-      tooltipLeft: coords.x,
-      tooltipTop: coords.y + 100,
+      tooltipLeft: coords.x + 500,
+      tooltipTop: coords.y + 200,
     });
     setHoveredBar(datum);
   };
