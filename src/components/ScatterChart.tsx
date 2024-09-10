@@ -61,7 +61,7 @@ const ScatterPlot: React.FC = ({ aggregatedData }: any) => {
                 const coords = localPoint(event) || { x: 0, y: 0 };
                 showTooltip({
                   tooltipData: point,
-                  tooltipLeft: coords.x,
+                  tooltipLeft: coords.x + 100,
                   tooltipTop: coords.y,
                 });
               }}
