@@ -6,6 +6,7 @@ import PieChart from "./components/PieChart";
 import LineChart from "./components/LineChart";
 import AreaChart from "./components/AreaChart";
 import ScatterPlot from "./components/ScatterChart";
+import Table from "./components/Table";
 
 // import { BarChartVisx } from "./BarChartVisx";
 
@@ -114,30 +115,11 @@ const App = () => {
       //   return <FunnelChart aggregatedData={aggregatedData} />;
       case "table":
         return (
-          <table style={{ margin: "0 auto", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th style={{ border: "1px solid black", padding: "8px" }}>
-                  {xAxisKey}
-                </th>
-                <th style={{ border: "1px solid black", padding: "8px" }}>
-                  {yAxisKey}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {aggregatedData.map((row, index) => (
-                <tr key={index}>
-                  <td style={{ border: "1px solid black", padding: "8px" }}>
-                    {row.name}
-                  </td>
-                  <td style={{ border: "1px solid black", padding: "8px" }}>
-                    {row.value}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <Table
+            xAxisKey={xAxisKey}
+            yAxisKey={yAxisKey}
+            aggregatedData={aggregatedData}
+          />
         );
       default:
         return null;
