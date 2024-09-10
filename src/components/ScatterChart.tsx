@@ -54,8 +54,8 @@ const ScatterPlot: React.FC = ({ aggregatedData }: any) => {
               cx={xScale(point.name) ?? 0}
               cy={yScale(point.value)}
               r={5}
-              fill="#FF6384"
-              stroke="#FF6384"
+              fill="#3943c5"
+              stroke="#3943c5"
               strokeWidth={2}
               onMouseMove={(event) => {
                 const coords = localPoint(event) || { x: 0, y: 0 };

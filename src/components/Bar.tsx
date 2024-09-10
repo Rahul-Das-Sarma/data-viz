@@ -46,8 +46,6 @@ const BarChart: React.FC = ({ aggregatedData, xAxis, yAxis }: any) => {
     setHoveredBar(datum);
   };
 
-  console.log(aggregatedData);
-
   return (
     <div>
       <svg width={width} height={height}>
