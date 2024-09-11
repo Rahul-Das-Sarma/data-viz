@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Circle } from "@visx/shape";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
@@ -12,13 +12,7 @@ type DataPoint = {
   value: number;
 };
 
-// Example data
-// const data: DataPoint[] = [
-//   { name: "yes", value: 1456 },
-//   { name: "no", value: 885 },
-// ];
-
-const ScatterPlot: React.FC = ({ aggregatedData }: any) => {
+const ScatterPlot: React.FC = ({ aggregatedData, xAxis, yAxis }: any) => {
   const width = 500;
   const height = 400;
   const margin = { top: 40, right: 20, bottom: 60, left: 60 };
@@ -75,9 +69,31 @@ const ScatterPlot: React.FC = ({ aggregatedData }: any) => {
             scale={xScale}
             tickFormat={(name) => name ?? ""}
           />
+          {/* X Axis Label */}
+          <text
+            x={innerWidth / 2}
+            y={innerHeight + 40} // Adjust position below x-axis
+            textAnchor="middle"
+            fontSize={12}
+            fill="black"
+          >
+            {xAxis}
+          </text>
 
           {/* Y Axis */}
           <AxisLeft scale={yScale} />
+
+          {/* Y Axis Label */}
+          <text
+            x={-innerHeight / 2} // Position along the y-axis, rotating later
+            y={-50} // Adjust position left of y-axis
+            textAnchor="middle"
+            transform="rotate(-90)" // Rotate the text to be vertical
+            fontSize={12}
+            fill="black"
+          >
+            {yAxis}
+          </text>
         </Group>
       </svg>
 

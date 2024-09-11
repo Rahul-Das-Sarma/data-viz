@@ -106,11 +106,29 @@ const App = () => {
       case "pie":
         return <PieChart aggregatedData={aggregatedData} />;
       case "line":
-        return <LineChart aggregatedData={aggregatedData} />;
+        return (
+          <LineChart
+            aggregatedData={aggregatedData}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
+          />
+        );
       case "area":
-        return <AreaChart aggregatedData={aggregatedData} />;
+        return (
+          <AreaChart
+            aggregatedData={aggregatedData}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
+          />
+        );
       case "scatter":
-        return <ScatterPlot aggregatedData={aggregatedData} />;
+        return (
+          <ScatterPlot
+            aggregatedData={aggregatedData}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
+          />
+        );
       // case "funnel":
       //   return <FunnelChart aggregatedData={aggregatedData} />;
       case "table":
