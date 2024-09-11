@@ -8,20 +8,21 @@ import AreaChart from "./components/AreaChart";
 import ScatterPlot from "./components/ScatterChart";
 import Table from "./components/Table";
 
+// import { BarChartVisx } from "./BarChartVisx";
+
 // DataPoint interface for TypeScript
 interface DataPoint {
   [key: string]: string | number;
 }
-
 const App = () => {
   // State to store parsed CSV data
   const [data, setData] = useState<DataPoint[]>([]);
   const [headers, setHeaders] = useState<string[]>([]); // Store the headers (columns)
   const [csvFile, setCsvFile] = useState<File | null>(null);
 
-  // State to handle axis selection (multiple options)
-  const [xAxisKeys, setXAxisKeys] = useState<string[]>([]); // User's X-axis choices
-  const [yAxisKeys, setYAxisKeys] = useState<string[]>([]); // User's Y-axis choices
+  // State to handle axis selection
+  const [xAxisKey, setXAxisKey] = useState<string>(""); // User's X-axis choice
+  const [yAxisKey, setYAxisKey] = useState<string>(""); // User's Y-axis choice
 
   // State to handle chart type selection
   const [chartType, setChartType] = useState<string>("bar"); // Default chart type
@@ -46,58 +47,48 @@ const App = () => {
         const columnHeaders = Object.keys(parsedData[0]);
         setData(parsedData); // Store parsed data
         setHeaders(columnHeaders); // Store headers for user to choose from
+        if (columnHeaders.length >= 2) {
+          setXAxisKey(columnHeaders[0]); // Set first column as default X-axis
+          setYAxisKey(columnHeaders[1]); // Set second column as default Y-axis
+        }
       },
       error: (error) => {
         console.error("Error parsing CSV:", error);
       },
     });
   };
-
   // Function to group data by X-axis and count/sum values for Y-axis
-  const aggregateData = (
-    data: DataPoint[],
-    xKeys: string[],
-    yKeys: string[]
-  ) => {
-    const groupedData: Record<string, Record<string, number>> = {};
+  const aggregateData = (data: DataPoint[], xKey: string, yKey: string) => {
+    const groupedData: Record<string, number> = {};
 
     data.forEach((row) => {
-      const xValues = xKeys.map((key) => row[key]).join(", ");
-      if (!groupedData[xValues]) {
-        groupedData[xValues] = {};
+      const xValue = row[xKey] as string;
+      const yValue = row[yKey];
+
+      if (!groupedData[xValue]) {
+        groupedData[xValue] = 0;
       }
 
-      yKeys.forEach((yKey) => {
-        const yValue = row[yKey];
-        if (!groupedData[xValues][yKey]) {
-          groupedData[xValues][yKey] = 0;
-        }
-
-        if (typeof yValue === "number") {
-          groupedData[xValues][yKey] += yValue;
-        } else {
-          groupedData[xValues][yKey] += 1;
-        }
-      });
+      if (typeof yValue === "number") {
+        groupedData[xValue] += yValue;
+      } else {
+        groupedData[xValue] += 1;
+      }
     });
 
-    return Object.keys(groupedData).map((xValue) => {
-      const yValues = yKeys.reduce((acc, key) => {
-        acc[key] = groupedData[xValue][key];
-        return acc;
-      }, {} as Record<string, number>);
-
-      return { name: xValue, ...yValues };
-    });
+    return Object.keys(groupedData).map((xValue) => ({
+      name: xValue,
+      value: groupedData[xValue],
+    }));
   };
 
   // Aggregate the data
   const aggregatedData =
-    data.length > 0 && xAxisKeys.length > 0 && yAxisKeys.length > 0
-      ? aggregateData(data, xAxisKeys, yAxisKeys)
+    data.length > 0 && xAxisKey && yAxisKey
+      ? aggregateData(data, xAxisKey, yAxisKey)
       : [];
 
-  console.log("axis", xAxisKeys, yAxisKeys);
+  console.log(aggregatedData);
   // Color palette for PieChart
   const COLORS = ["#8884d8", "#82ca9d", "#ffc658"];
 
@@ -108,8 +99,8 @@ const App = () => {
         return (
           <BarChart
             aggregatedData={aggregatedData}
-            xAxis={xAxisKeys}
-            yAxis={yAxisKeys}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
           />
         );
       case "pie":
@@ -118,31 +109,33 @@ const App = () => {
         return (
           <LineChart
             aggregatedData={aggregatedData}
-            xAxis={xAxisKeys}
-            yAxis={yAxisKeys}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
           />
         );
       case "area":
         return (
           <AreaChart
             aggregatedData={aggregatedData}
-            xAxis={xAxisKeys}
-            yAxis={yAxisKeys}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
           />
         );
       case "scatter":
         return (
           <ScatterPlot
             aggregatedData={aggregatedData}
-            xAxis={xAxisKeys}
-            yAxis={yAxisKeys}
+            xAxis={xAxisKey}
+            yAxis={yAxisKey}
           />
         );
+      // case "funnel":
+      //   return <FunnelChart aggregatedData={aggregatedData} />;
       case "table":
         return (
           <Table
-            xAxisKey={xAxisKeys}
-            yAxisKey={yAxisKeys}
+            xAxisKey={xAxisKey}
+            yAxisKey={yAxisKey}
             aggregatedData={aggregatedData}
           />
         );
@@ -150,6 +143,8 @@ const App = () => {
         return null;
     }
   };
+
+  // return <Baraa />;
 
   return (
     <div style={{ display: "flex", justifyContent: "center", width: "100vw" }}>
@@ -170,17 +165,9 @@ const App = () => {
             <label>
               X-Axis:
               <select
-                value={xAxisKeys}
-                onChange={(e) =>
-                  setXAxisKeys(
-                    Array.from(
-                      e.target.selectedOptions,
-                      (option) => option.value
-                    )
-                  )
-                }
-                multiple
-                style={{ margin: "10px", width: "200px", height: "100px" }}
+                value={xAxisKey}
+                onChange={(e) => setXAxisKey(e.target.value)}
+                style={{ margin: "10px" }}
               >
                 {headers.map((header) => (
                   <option key={header} value={header}>
@@ -193,17 +180,9 @@ const App = () => {
             <label>
               Y-Axis:
               <select
-                value={yAxisKeys}
-                onChange={(e) =>
-                  setYAxisKeys(
-                    Array.from(
-                      e.target.selectedOptions,
-                      (option) => option.value
-                    )
-                  )
-                }
-                multiple
-                style={{ margin: "10px", width: "200px", height: "100px" }}
+                value={yAxisKey}
+                onChange={(e) => setYAxisKey(e.target.value)}
+                style={{ margin: "10px" }}
               >
                 {headers.map((header) => (
                   <option key={header} value={header}>
@@ -229,6 +208,7 @@ const App = () => {
               <option value="line">Line Chart</option>
               <option value="area">Area Chart</option>
               <option value="scatter">Scatter Chart</option>
+              {/* <option value="funnel">Funnel Chart</option> */}
               <option value="table">Table</option>
             </select>
           </label>
@@ -236,6 +216,14 @@ const App = () => {
 
         {/* Conditionally render the selected chart */}
         {aggregatedData.length > 0 && renderChart()}
+
+        {/* Display current parsed data as JSON for reference */}
+        {/* {data.length > 0 && (
+        <div>
+          <h4>Parsed CSV Data:</h4>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )} */}
       </div>
     </div>
   );
